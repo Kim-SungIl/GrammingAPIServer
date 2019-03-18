@@ -3,6 +3,8 @@ package com.gramming.controller;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,10 +21,12 @@ import com.gramming.vo.StatusCode;
 public class PoltfolioController {
 
 	@Autowired
-	HtmlDownloader htmlDownloader;	
+	HtmlDownloader htmlDownloader;
 	@Autowired
 	HtmlToPdfConverter htmlToPdfConverter;
-	
+
+	private final Logger logger = LoggerFactory.getLogger(PoltfolioController.class);
+
 	/***
 	 * Web url에 있는 포트폴리오를 Html 형태로 다운받아 device에 저장한다.
 	 * 
@@ -48,12 +52,13 @@ public class PoltfolioController {
 			responseVo = new ResponseVO(e);
 			return responseVo;
 		}
-		
+
 		responseVo = new ResponseVO(StatusCode.SUCCESS);
 		responseVo.putResponseMap("downloadTime", downloadTime);
+		logger.info("Success download html file");
 		return responseVo;
 	}
-	
+
 	/***
 	 * 
 	 * @param userId
@@ -64,7 +69,7 @@ public class PoltfolioController {
 	public ResponseVO convertHtmlToPdf(@RequestParam("userId") String userId,
 			@RequestParam("downloadTime") String downloadTime) throws Exception {
 		ResponseVO responseVo;
-		
+
 		try {
 			htmlToPdfConverter.makePdf(userId, downloadTime);
 		} catch (MalformedURLException e) {
@@ -77,7 +82,7 @@ public class PoltfolioController {
 			responseVo = new ResponseVO(e);
 			return responseVo;
 		}
-		
+
 		responseVo = new ResponseVO(StatusCode.SUCCESS);
 		return responseVo;
 	}
